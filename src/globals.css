@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css?family=Inter:400,700,500,600");
+
+* {
+	box-sizing: border-box;
+	font-family: var(--font-family);
+}
+
+::-webkit-scrollbar {
+	width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--scrollbar);
+	border-radius: 6px;
+}
+
+:root {
+	--bar: #616b84;
+	--black2: #000000;
+	--border-hover: #66ffe9;
+	--branding-colorbrandcyansecondary: #2eb7a6;
+	--bright-turquoise: #33ffe2;
+	--dark-blue: #1c1d23;
+	--dental-blue: #4c18e3;
+	--cadet-blue: #a5b4c9;
+	--cavities: #c07120;
+	--charade: #292c34;
+	--dimgray: #385a56;
+	--dark-red: #773d03;
+	--disabled: #434c62;
+	--eerie-black-2: #161717;
+	--eerie-black: #1b1d23;
+	--fade-in-duration: 0.6s;
+	--geyser: #d5daea;
+	--graydark: #d9d9d9;
+	--graydark2: #434c62;
+	--graygraymedium: #a5b4c9;
+	--grey: #cedae3;
+	--hover-panel: #484d57;
+	--hover-toggle: #d5daeb;
+	--hover: #232731;
+	--nevada2: #616a83;
+	--orange-severity: #ff7b43;
+	--perio: #aa9f3d;
+	--red: #f15b5b;
+	--red-severity: #f93d3d;
+	--river-bed: #434b61;
+	--scrollbar: #434c62;
+	--search: #a6b5ca;
+	--selected: #1a415b;
+	--toggle-off: #a6b5ca;
+	--transparency-slider: rgba(51, 53, 61, 0.83);
+	--tuna: #33343cd4;
+	--white: #ffffff;
+	--xray-fade-in-duration: 0.1s;
+	--yellow-severity: #fff500;
+
+	--font-size-l: 16px;
+	--font-size-m: 14px;
+	--font-size-s: 12px;
+	--font-size-xs: 10px;
+	--font-family: "Inter", Helvetica;
+}
+
+body {
+	-drag: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
+	margin: 0px;
+	user-select: none;
+}
+
+button,
+select {
+	appearance: none;
+	background-color: transparent;
+	border: 0;
+	border-style: solid;
+	margin: 0;
+	padding: 0;
+}
+
+button:disabled {
+	cursor: not-allowed;
+}
+
+img {
+	-drag: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+input:focus {
+	outline: none;
+}
+
+rect[fill="rgba(229,240,244,0.3)"] {
+	fill: rgba(0, 0, 0, 0) !important;
+	stroke: rgba(0, 0, 0, 0) !important;
+}
