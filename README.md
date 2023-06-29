@@ -1,4 +1,5 @@
-# A Proof of Concept
+# Image-Grid-Cropper
+## A Proof of Concept
 ### App that allow you crop up your uploaded images in a grid-like manner. 
 
 ![Alt text](image-1.png)
