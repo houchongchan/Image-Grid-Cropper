@@ -1,11 +1,9 @@
-import { hot } from "react-hot-loader/root";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Canvas from "./Canvas";
 import GridBox from "./GridBox";
 import SVG from "./SVG";
 import ReactDOM from "react-dom";
-import im1 from "./assets/test1.png";
 
 function App() {
 	const [image, setImage] = useState();
@@ -155,7 +153,7 @@ function App() {
 	);
 }
 
-export default hot(App);
+export default App;
 
 const Img = styled.img`
 	position: absolute;
