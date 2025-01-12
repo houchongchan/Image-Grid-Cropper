@@ -7,16 +7,10 @@ export default function Canvas(props) {
 
 	const onClick = () => {
 		const currentCoords = {
-			x: Math.round(x / 50) * 50 + 1,
-			y: Math.round(y / 50) * 50 + 1,
+			x: Math.round(x / 50) * 50,
+			y: Math.round(y / 50) * 50,
 		};
-		if (
-			coordinates.length !== 0 &&
-			((coordinates[coordinates.length - 1].x === currentCoords.x &&
-				coordinates[coordinates.length - 1].y === currentCoords.y) ||
-				(coordinates[coordinates.length - 1].x !== currentCoords.x &&
-					coordinates[coordinates.length - 1].y !== currentCoords.y))
-		) {
+		if (coordinates.length !== 0 && currentCoords.x % 50 !== 0) {
 			return;
 		}
 		if (
@@ -48,9 +42,8 @@ export default function Canvas(props) {
 
 		context.lineWidth = 4;
 		coordinates.map((e, i) => {
-			if (i === coordinates.length - 1) {
-				return;
-			}
+			if (i === coordinates.length - 1) return;
+
 			context.moveTo(e.x, e.y);
 			context.lineTo(coordinates[i + 1].x, coordinates[i + 1].y);
 		});
