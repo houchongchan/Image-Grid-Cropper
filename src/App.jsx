@@ -102,7 +102,7 @@ function App() {
 				<Title>
 					<svg>
 						<text id="i1" x="50%" y="50%" dy=".35em" text-anchor="middle">
-							Clip Path Generator
+							Polygon / Clip Path Generator
 						</text>
 					</svg>
 
@@ -252,7 +252,9 @@ const Title = styled.div`
 
 	svg {
 		height: 50px;
+		width: 100%;
 	}
+
 	svg text {
 		stroke-width: 2;
 		stroke: #365fa0;
