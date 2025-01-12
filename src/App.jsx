@@ -76,9 +76,21 @@ function App() {
 		setPolygonPoints(tmp);
 	};
 
+	const onMovePolygon = (id, x, y) => {
+		const tmp = JSON.parse(JSON.stringify(polygonPoints));
+		const changeX = x - tmp[id][0].x;
+		const changeY = y - tmp[id][0].y;
+		tmp[id] = tmp[id].map((e) => {
+			return { x: e.x + changeX, y: e.y + changeY };
+		});
+
+		setPolygonPoints(tmp);
+	};
+
 	const onClearPolygons = () => {
 		setPolygonPoints([]);
 	};
+
 	const copySVGCode = () => {
 		const copyText = createMarkdown(dimensions, polygonPoints, image, imgSize);
 		navigator.clipboard.writeText(copyText);
@@ -104,7 +116,6 @@ function App() {
 						/>
 					</div>
 				</Title>
-				{/* <Wrapper> */}
 				<Grid ref={targetRef} dimensions={dimensions}>
 					{targetRef.current && (
 						<Img
@@ -173,6 +184,7 @@ function App() {
 							imgSize={imgSize}
 							image={image}
 							onPolygonChange={onPolygonChange}
+							onMovePolygon={onMovePolygon}
 						/>
 					)}
 				</Grid>
@@ -182,8 +194,6 @@ function App() {
 					</code>
 				</SVGCode>
 				<Copy onClick={copySVGCode} />
-
-				{/* </Wrapper> */}
 			</Col>
 			<Body>
 				<Toolbar
@@ -215,6 +225,7 @@ const Copy = styled(CopyIcon)`
 	border-radius: 3px;
 	cursor: pointer;
 `;
+
 const Col = styled.div`
 	display: flex;
 	flex-direction: column;

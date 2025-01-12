@@ -40,7 +40,12 @@ export default function Toolbar({ onAdd, polygonPoints, onClearPolygons }) {
 					{alphabet.map((e) => {
 						const points = alphabetPoints[e];
 						return (
-							<Button key={e} onClick={() => onAdd(points)}>
+							<Button
+								key={e}
+								onClick={() => onAdd(points)}
+								disabled={points.length === 0}
+								inactive={points.length === 0}
+							>
 								<span>{e}</span>
 							</Button>
 						);
@@ -65,6 +70,9 @@ const Button = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	&:disabled {
+		background: lightgrey;
+	}
 
 	outline: none;
 	background: linear-gradient(
@@ -98,19 +106,7 @@ const Button = styled.button`
 		width: 0%;
 		height: 2px;
 	}
-	&:hover {
-		background: transparent;
-		box-shadow: none;
-	}
-	&:hover:before {
-		height: 100%;
-	}
-	&:hover:after {
-		width: 100%;
-	}
-	span:hover {
-		color: rgba(200, 126, 151, 1);
-	}
+
 	span:before,
 	span:after {
 		position: absolute;
@@ -128,13 +124,29 @@ const Button = styled.button`
 		width: 0%;
 		height: 2px;
 	}
+
+	${({ inactive }) => !inactive && hoverEffects}
+`;
+
+const hoverEffects = `	&:hover {
+		background: transparent;
+		box-shadow: none;
+	}
+	&:hover:before {
+		height: 100%;
+	}
+	&:hover:after {
+		width: 100%;
+	}
+	span:hover {
+		color: rgba(200, 126, 151, 1);
+	}
 	span:hover:before {
 		height: 100%;
 	}
 	span:hover:after {
 		width: 100%;
-	}
-`;
+	}`;
 
 const Title = styled.div`
 	color: #fff;

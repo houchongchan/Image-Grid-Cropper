@@ -79,4 +79,5 @@ pre code {
 	word-wrap: normal;
 	line-height: 1.5;
 	width: 100%;
+	user-select: text;
 }

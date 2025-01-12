@@ -2,16 +2,25 @@ import styled from "styled-components";
 import React, { useRef, useState } from "react";
 
 function DetectionBox(props) {
-	const { points, onChange, parentWidth, parentHeight } = props;
+	const { points, onChange, onMovePolygon, parentWidth, parentHeight } = props;
 
 	const [clicked, setClicked] = useState(false);
 	const dragOccurred = useRef(false);
 
+	const midDragInProgress = useRef(false);
 	const mouseXAtPress = useRef();
 	const mouseYAtPress = useRef();
 	const idAtPress = useRef();
 	const startXAtPress = useRef();
 	const startYAtPress = useRef();
+
+	const onMoveMouseDown = (event) => {
+		if (event.button === 0) {
+			event.preventDefault();
+			midDragInProgress.current = true;
+			onDragBegin(event.clientX, event.clientY, null, null);
+		}
+	};
 
 	const onMidMouseDown = (event, id, x, y) => {
 		idAtPress.current = id;
@@ -27,6 +36,12 @@ function DetectionBox(props) {
 		mouseXAtPress.current = eventX;
 		mouseYAtPress.current = eventY;
 
+		if (midDragInProgress.current) {
+			startXAtPress.current = points[0].x;
+			startYAtPress.current = points[0].y;
+			return;
+		}
+
 		startXAtPress.current = x;
 		startYAtPress.current = y;
 	};
@@ -39,6 +54,9 @@ function DetectionBox(props) {
 	const onDrag = (eventX, eventY) => {
 		let x = getXAfterDrag(startXAtPress, eventX);
 		let y = getYAfterDrag(startYAtPress, eventY);
+		if (midDragInProgress.current) {
+			return onMovePolygon(x, y);
+		}
 
 		onChange(idAtPress.current, x, y);
 	};
@@ -55,13 +73,22 @@ function DetectionBox(props) {
 
 	const endDrag = (clientX, clientY) => {
 		if (!clicked) return;
-		if (dragOccurred) {
-			dragOccurred.current = false;
-		}
-
 		setClicked(false);
+
+		if (dragOccurred) dragOccurred.current = false;
+
 		const x = getXAfterDrag(startXAtPress, clientX);
 		const y = getYAfterDrag(startYAtPress, clientY);
+
+		if (midDragInProgress.current) {
+			midDragInProgress.current = false;
+			if (x % 50 !== 1 || y % 50 !== 1) {
+				const newX = Math.round(x / 50) * 50;
+				const newY = Math.round(y / 50) * 50;
+				onMovePolygon(newX, newY);
+			}
+			return;
+		}
 		if (x % 50 !== 1 || y % 50 !== 1) {
 			const newX = Math.round(x / 50) * 50;
 			const newY = Math.round(y / 50) * 50;
@@ -79,6 +106,12 @@ function DetectionBox(props) {
 			dragging={clicked}
 		>
 			<SVG>
+				<Polygon
+					points={`${points.map((e) => {
+						return `${e.x},${e.y} `;
+					})}`}
+					onMouseDown={(e) => onMoveMouseDown(e)}
+				/>
 				{points.map((e, id2) => {
 					const x = e.x;
 					const y = e.y;
@@ -122,4 +155,10 @@ const SVG = styled.svg`
 	cursor: pointer;
 	width: 100%;
 	height: 100%;
+`;
+
+const Polygon = styled.polygon`
+	stroke: transparent;
+	fill: transparent;
+	pointer-events: auto;
 `;

@@ -2,8 +2,15 @@ import styled from "styled-components";
 import AdjustablePolygon from "./AdjustablePolygon";
 
 export default function SVG(props) {
-	const { polygonPoints, height, width, imgSize, image, onPolygonChange } =
-		props;
+	const {
+		polygonPoints,
+		height,
+		width,
+		imgSize,
+		image,
+		onPolygonChange,
+		onMovePolygon,
+	} = props;
 	const dimensions = {
 		height: height || 100,
 		width: width || 100,
@@ -55,6 +62,7 @@ export default function SVG(props) {
 							points={points}
 							id={i}
 							onChange={(i2, x, y) => onPolygonChange(i, i2, x, y)}
+							onMovePolygon={(x, y) => onMovePolygon(i, x, y)}
 						/>
 					);
 				})}
