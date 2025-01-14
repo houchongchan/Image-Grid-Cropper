@@ -2,15 +2,15 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 export default function Canvas(props) {
-	const { onComplete, coordinates, onAdd, x, y, height, width } = props;
+	const { onComplete, coordinates, onAdd, x, y, height, width, gap } = props;
 	const canvasRef = useRef();
 
 	const onClick = () => {
 		const currentCoords = {
-			x: Math.round(x / 50) * 50,
-			y: Math.round(y / 50) * 50,
+			x: Math.round(x / gap) * gap,
+			y: Math.round(y / gap) * gap,
 		};
-		if (coordinates.length !== 0 && currentCoords.x % 50 !== 0) {
+		if (coordinates.length !== 0 && currentCoords.x % gap !== 0) {
 			return;
 		}
 		if (

@@ -4,7 +4,7 @@ import Canvas from "./grid/Canvas";
 import GridBox from "./grid/GridBox";
 import SVG from "./grid/SVG";
 import ReactDOM from "react-dom";
-import Toolbar from "./Toolbar";
+import Toolbar from "./tools/Toolbar";
 import { createMarkdown } from "./Utils";
 import { ReactComponent as CopyIcon } from "./icons/copy.svg";
 
@@ -17,23 +17,25 @@ function App() {
 	const [polygonPoints, setPolygonPoints] = useState([]);
 	const [imgSize, setImgSize] = useState();
 	const [loaded, setLoaded] = useState(false);
+	const [lock, setLock] = useState(true);
+	const [gap, setGap] = useState(50);
 
 	const targetRef = useRef();
+	const leftRef = useRef();
 	const container = useRef();
 
 	useLayoutEffect(() => {
-		if (!targetRef.current || targetRef.current.offsetTop == 0) {
-			return;
-		}
-		const width = Math.round(targetRef.current.offsetWidth / 50) * 50;
-		const height = Math.round(targetRef.current.offsetHeight / 50) * 50;
+		if (!targetRef.current || targetRef.current.offsetTop === 0) return;
+
+		const width = Math.round(targetRef.current.offsetWidth / gap) * gap;
+		const height = Math.round(targetRef.current.offsetHeight / gap) * gap;
 		setDimensions({
 			width: width,
 			height: height,
 		});
 		setLines({
-			vertical: Math.round(targetRef.current.offsetHeight / 50),
-			horizontal: Math.round(targetRef.current.offsetWidth / 50),
+			vertical: Math.round(targetRef.current.offsetHeight / gap),
+			horizontal: Math.round(targetRef.current.offsetWidth / gap),
 		});
 
 		const handleMouseMove = (event) => {
@@ -48,6 +50,30 @@ function App() {
 			window.removeEventListener("mousemove", handleMouseMove);
 		};
 	}, []);
+
+	useEffect(() => {
+		if (leftRef.current && targetRef.current) {
+			const observer = new ResizeObserver((entries) => {
+				if (lock) {
+					const width = Math.round(leftRef.current.offsetWidth / gap) * gap;
+					const height = Math.round(targetRef.current.offsetHeight / gap) * gap;
+					setDimensions({
+						height,
+						width,
+					});
+					setLines({
+						vertical: Math.round(targetRef.current.offsetHeight / gap),
+						horizontal: Math.round(leftRef.current.offsetWidth / gap),
+					});
+				}
+			});
+			observer.observe(leftRef.current);
+
+			return () => {
+				observer.disconnect();
+			};
+		}
+	}, [lock, gap]);
 
 	useEffect(() => {
 		// eslint-disable-next-line react/no-find-dom-node
@@ -96,98 +122,115 @@ function App() {
 		navigator.clipboard.writeText(copyText);
 	};
 
+	const onGridWidthChange = (newWidth) => {
+		const width = Math.round(newWidth / gap) * gap;
+		const height = Math.round(targetRef.current.offsetHeight / gap) * gap;
+
+		setDimensions({
+			height,
+			width,
+		});
+
+		setLines({
+			vertical: Math.round(targetRef.current.offsetHeight / gap),
+			horizontal: width / gap,
+		});
+	};
+
 	return (
 		<Container>
-			<Col>
+			<Col ref={leftRef}>
 				<Title>
 					<svg>
 						<text id="i1" x="50%" y="50%" dy=".35em" text-anchor="middle">
 							Polygon / Clip Path Generator
 						</text>
 					</svg>
-
-					<div>
-						<input
-							className=" upload-button"
-							accept="image/jpg, image/jpeg, image/png"
-							type="file"
-							name="image"
-							onChange={uploadImage}
-						/>
-					</div>
+					<File
+						className=" upload-button"
+						accept="image/jpg, image/jpeg, image/png"
+						type="file"
+						name="image"
+						onChange={uploadImage}
+					/>
 				</Title>
-				<Grid ref={targetRef} dimensions={dimensions}>
-					{targetRef.current && (
-						<Img
-							ref={container}
-							src={image}
-							onLoad={() => setLoaded(!loaded)}
-						/>
-					)}
-					{lines.horizontal &&
-						lines.vertical &&
-						Array.apply(null, Array(lines.vertical)).map((_, i1) => {
-							return (
-								<Row key={i1}>
-									{Array.apply(null, Array(lines.horizontal)).map((_, i2) => {
-										const gridX = i1 * 50;
-										const gridY = i2 * 50;
-										const nearbyX = (i1 + 1) * 50;
-										const nearbyY = (i2 + 1) * 50;
-										const range = 25;
+				<GridWrapper lock={lock}>
+					<Grid ref={targetRef} dimensions={dimensions}>
+						{targetRef.current && (
+							<Img
+								ref={container}
+								src={image}
+								onLoad={() => setLoaded(!loaded)}
+							/>
+						)}
+						{lines.horizontal &&
+							lines.vertical &&
+							Array.apply(null, Array(lines.vertical)).map((_, i1) => {
+								return (
+									<Row key={i1}>
+										{Array.apply(null, Array(lines.horizontal)).map((_, i2) => {
+											const gridX = i1 * gap;
+											const gridY = i2 * gap;
+											const nearbyX = (i1 + 1) * gap;
+											const nearbyY = (i2 + 1) * gap;
+											const range = gap * 1.5;
 
-										return (
-											<GridBox
-												key={i2}
-												hoverX={
-													mousePosition.y < gridX + range &&
-													mousePosition.y > gridX - range &&
-													((mousePosition.x < gridY + range &&
-														mousePosition.x > gridY - range) ||
-														(mousePosition.x < nearbyY + range &&
-															mousePosition.x > nearbyY - range) ||
-														(mousePosition.x < nearbyY &&
-															mousePosition.x > gridY))
-												}
-												hoverY={
-													mousePosition.x < gridY + range &&
-													mousePosition.x > gridY - range &&
-													((mousePosition.y < gridX + range &&
-														mousePosition.y > gridX - range) ||
-														(mousePosition.y < nearbyX + range &&
-															mousePosition.y > nearbyX - range) ||
-														(mousePosition.y < nearbyX &&
-															mousePosition.y > i1 * 50))
-												}
-											/>
-										);
-									})}
-								</Row>
-							);
-						})}
-					{targetRef.current && (
-						<Canvas
-							coordinates={coordinates}
-							onAdd={setCoordinates}
-							onComplete={setPolygonPoints}
-							height={dimensions.height}
-							width={dimensions.width}
-							x={mousePosition.x}
-							y={mousePosition.y}
-						/>
-					)}
-					{targetRef.current && (
-						<SVG
-							height={dimensions.height}
-							polygonPoints={polygonPoints}
-							width={dimensions.width}
-							imgSize={imgSize}
-							image={image}
-							onPolygonChange={onPolygonChange}
-							onMovePolygon={onMovePolygon}
-						/>
-					)}
-				</Grid>
+											return (
+												<GridBox
+													key={i2}
+													hoverX={
+														mousePosition.y < gridX + range &&
+														mousePosition.y > gridX - range &&
+														((mousePosition.x < gridY + range &&
+															mousePosition.x > gridY - range) ||
+															(mousePosition.x < nearbyY + range &&
+																mousePosition.x > nearbyY - range) ||
+															(mousePosition.x < nearbyY &&
+																mousePosition.x > gridY))
+													}
+													hoverY={
+														mousePosition.x < gridY + range &&
+														mousePosition.x > gridY - range &&
+														((mousePosition.y < gridX + range &&
+															mousePosition.y > gridX - range) ||
+															(mousePosition.y < nearbyX + range &&
+																mousePosition.y > nearbyX - range) ||
+															(mousePosition.y < nearbyX &&
+																mousePosition.y > i1 * gap))
+													}
+													gap={gap}
+												/>
+											);
+										})}
+									</Row>
+								);
+							})}
+						{targetRef.current && (
+							<Canvas
+								gap={gap}
+								coordinates={coordinates}
+								onAdd={setCoordinates}
+								onComplete={setPolygonPoints}
+								height={dimensions.height}
+								width={dimensions.width}
+								x={mousePosition.x}
+								y={mousePosition.y}
+							/>
+						)}
+						{targetRef.current && (
+							<SVG
+								height={dimensions.height}
+								polygonPoints={polygonPoints}
+								width={dimensions.width}
+								imgSize={imgSize}
+								image={image}
+								onPolygonChange={onPolygonChange}
+								onMovePolygon={onMovePolygon}
+								gap={gap}
+							/>
+						)}
+					</Grid>
+				</GridWrapper>
 				<SVGCode>
 					<code>
 						{createMarkdown(dimensions, polygonPoints, image, imgSize)}
@@ -200,6 +243,12 @@ function App() {
 					onAdd={onToolbarButtonClick}
 					polygonPoints={polygonPoints}
 					onClearPolygons={onClearPolygons}
+					dimensions={dimensions}
+					onLock={() => setLock(!lock)}
+					lock={lock}
+					onGapChange={(e) => setGap(e)}
+					gap={gap}
+					onGridWidthChange={onGridWidthChange}
 				/>
 			</Body>
 		</Container>
@@ -248,7 +297,9 @@ const Title = styled.div`
 	border-radius: 6px;
 	box-shadow: inset 0 -3px rgba(211, 208, 201, 0.25);
 	overflow: hidden;
-	padding-bottom: 10px;
+	display: flex;
+	padding: 10px;
+	padding-top: 5px;
 
 	svg {
 		height: 50px;
@@ -310,11 +361,20 @@ const Container = styled.div`
 	background: #5c4084;
 `;
 
+const GridWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 70%;
+	overflow-x: ${({ lock }) => (lock ? `hidden` : "scroll")};
+	overflow-y: hidden;
+`;
+
 const Grid = styled.div`
 	display: flex;
 	flex-direction: column;
 	height: ${({ dimensions }) =>
-		dimensions.height !== 0 ? `${dimensions.height}px` : "70%"};
+		dimensions.height !== 0 ? `${dimensions.height}px` : "100%"};
 	width: ${({ dimensions }) =>
 		dimensions.width !== 0 ? `${dimensions.width}px` : "100%"};
 	position: relative;
@@ -330,4 +390,33 @@ const Img = styled.img`
 	transform: translate(-50%, -50%);
 	z-index: -1;
 	overflow: hidden;
+`;
+
+const File = styled.input`
+	border: 2px solid cyan;
+	width: 180px;
+	font-size: 10px;
+	padding-left: 15px;
+	color: grey;
+	cursor: pointer;
+	height: 80%;
+	display: flex;
+	align-items: center;
+	align-self: center;
+	cursor: pointer;
+
+	&:focus,
+	&:active {
+		outline: 0;
+		border-color: red;
+	}
+
+	&::-webkit-file-upload-button {
+		border: 0;
+		color: white;
+		font-size: 12px;
+		background: #365fa0;
+		padding: 10px;
+		margin-left: -15px;
+	}
 `;

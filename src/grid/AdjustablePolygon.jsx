@@ -2,7 +2,8 @@ import styled from "styled-components";
 import React, { useRef, useState } from "react";
 
 function DetectionBox(props) {
-	const { points, onChange, onMovePolygon, parentWidth, parentHeight } = props;
+	const { points, onChange, onMovePolygon, parentWidth, parentHeight, gap } =
+		props;
 
 	const [clicked, setClicked] = useState(false);
 	const dragOccurred = useRef(false);
@@ -82,16 +83,16 @@ function DetectionBox(props) {
 
 		if (midDragInProgress.current) {
 			midDragInProgress.current = false;
-			if (x % 50 !== 1 || y % 50 !== 1) {
-				const newX = Math.round(x / 50) * 50;
-				const newY = Math.round(y / 50) * 50;
+			if (x % gap !== 0 || y % gap !== 0) {
+				const newX = Math.round(x / gap) * gap;
+				const newY = Math.round(y / gap) * gap;
 				onMovePolygon(newX, newY);
 			}
 			return;
 		}
-		if (x % 50 !== 1 || y % 50 !== 1) {
-			const newX = Math.round(x / 50) * 50;
-			const newY = Math.round(y / 50) * 50;
+		if (x % gap !== 0 || y % gap !== 0) {
+			const newX = Math.round(x / gap) * gap;
+			const newY = Math.round(y / gap) * gap;
 			onChange(idAtPress.current, newX, newY);
 		}
 	};

@@ -10,6 +10,7 @@ export default function SVG(props) {
 		image,
 		onPolygonChange,
 		onMovePolygon,
+		gap,
 	} = props;
 	const dimensions = {
 		height: height || 100,
@@ -63,6 +64,7 @@ export default function SVG(props) {
 							id={i}
 							onChange={(i2, x, y) => onPolygonChange(i, i2, x, y)}
 							onMovePolygon={(x, y) => onMovePolygon(i, x, y)}
+							gap={gap}
 						/>
 					);
 				})}
