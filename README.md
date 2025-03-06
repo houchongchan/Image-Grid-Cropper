@@ -2,7 +2,7 @@
 ## A Proof of Concept
 ### App that allow you crop up your uploaded images in a grid-like manner. 
 
-[![Alt text](image-1.png)](https://masked-polygons.netlify.app/)
+Live Demo: https://masked-polygons.netlify.app/
 
 Upload any image and it will be displayed semi-transparently beneath the grid in a manner.
 
