@@ -1,4 +1,4 @@
-# Clipped Path SVG Generator | Cl
+# Clipped Path SVG Generator | Interactive Graphics Editor
 
 Web-based SVG editor enabling users to create and export graphics
 
