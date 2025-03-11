@@ -1,14 +1,16 @@
-# Image-Grid-Cropper
-## A Proof of Concept
-### App that allow you crop up your uploaded images in a grid-like manner. 
+# Clipped Path SVG Generator | Cl
 
-Live Demo: https://masked-polygons.netlify.app/
+Web-based SVG editor enabling users to create and export graphics
 
-Upload any image and it will be displayed semi-transparently beneath the grid in a manner.
+> [!NOTE]
+> Live Demo: https://masked-polygons.netlify.app/
 
-Click along the edges of the grid to form a polygon that you would like to mask the image with. After the polygon is fully connnected, the result will be displayed below. 
+## Usage
 
+Click on points on the grid to begin drawing lines. Complete the polygon by connecting the final point to the starting point.
 
+Once the polygon is formed, an SVG code snippet will be displayed in the bottom-left corner of the web application for easy copying. Additionally, you can upload an image, which will be masked using the generated polygon.
 
+## License
 
-Created to originally to divide into image to jigsaw puzzle pieces using grid format mapped above the image.
+Distributed under the [MIT license](https://github.com/houchongchan/Image-Grid-Cropper/blob/main/LICENSE).
